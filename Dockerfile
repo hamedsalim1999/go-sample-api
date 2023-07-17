@@ -12,6 +12,6 @@ RUN apk --no-cache add ca-certificates
 
 WORKDIR /root/
 
-COPY --from=builder /app/sample-api .
+COPY --from=builder /app/sample_api .
 
-CMD ["./sample-api"]
+CMD ["./sample_api"]
