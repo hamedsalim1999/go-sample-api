@@ -6,4 +6,4 @@ COPY . /app
 
 RUN go get -t ./...
 
-CMD ["go","test"]
+CMD ["bash","test.sh"]
