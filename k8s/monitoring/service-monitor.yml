@@ -1,0 +1,22 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app.kubernetes.io/instance: go-sample
+    app.kubernetes.io/name: go-sample
+    release: monitoring
+  name: go-sample
+  namespace: sample
+spec:
+  endpoints:
+  - interval: 30s
+    path: /management-endpoints/prometheus
+    port: http-metrics
+  namespaceSelector:
+    matchNames:
+    - sample
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: metrics
+      app.kubernetes.io/instance: go-sample
+      app.kubernetes.io/name: go-sample

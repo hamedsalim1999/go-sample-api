@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: go-server
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: go-server
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+        - image: hamedsalim1999/go-samole:${IMAGE_TAG}
+          name: go-server
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: 1G
+            requests:
+              memory: 1G
+          ports:
+            - containerPort: 8080
+            - containerPort: 8088
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - if [ -z `curl http://localhost:8088/metrics  --silent | grep 'promhttp_metric_handler_requests_total'` ]; then  exit -1; else echo "OK" ; fi
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - if [ -z `curl http://localhost:8088/metrics  --silent | grep 'promhttp_metric_handler_requests_total'` ]; then  exit -1; else echo "OK" ; fi
+            timeoutSeconds: 5
+            failureThreshold: 2
+            periodSeconds: 20
+          

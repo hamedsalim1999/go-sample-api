@@ -1,0 +1,35 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    app.kubernetes.io/component: metrics
+    app.kubernetes.io/instance: go-sample
+    app.kubernetes.io/name: go-sample
+  name: go-sample
+  namespace: sample
+spec:
+  groups:
+  - name: go-sample
+    rules:
+# severity: warning , info , critical
+    - alert: Swapper status
+      expr: avg({namespace=~"sample", L1="Swapper", L2="Status"}) by (class) < 1
+      for: 2m
+      labels:
+        severity: warning
+        team: dev
+      annotations:
+        summary: Swapper is down {{ $labels.class }}
+        description: "Swapper is down {{ $labels.class }}"
+
+    - alert: Blockchain is down
+      expr: avg({namespace=~"sample", L1="Blockchain", L2="Status"}) by (class) < 1
+      for: 2m
+      labels:
+        severity: warning
+        team: business 
+      annotations:
+        summary: Blockchain is down {{ $labels.class }}
+        description: "Blockchain is down {{ $labels.class }}"
+
+  
