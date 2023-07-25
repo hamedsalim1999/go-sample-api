@@ -29,4 +29,4 @@ jobs:
       with:
         context: .
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/go-samole:${{ github.sha }}
+        tags: ${{ secrets.DOCKER_USERNAME }}/go-samole:${{ github.run_id }}
