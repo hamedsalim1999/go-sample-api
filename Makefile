@@ -14,8 +14,18 @@ build:
 configk8s:
 	aws eks update-kubeconfig --region us-east-1 --name ascode-cluster
 
+deployk8s:
+	terraform -chdir=terraform plan 
+	terraform -chdir=terraform apply 
+
+distroyk8s:
+	terraform -chdir=terraform destroy 
+
+applyingress:
+	helm install ingress -n ingress --create-namespace -f k8s/ingress-nginx/values-prod.yaml k8s/ingress-nginx
+	
 applyk8s:
+	kubectl apply -f k8s/app/server-namespace.yaml
 	kubectl apply -f k8s/app
 
-applymonitor:
-	kubectl apply -f k8s/monitoring
+

@@ -1,18 +1,24 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: go-server-ingress
+  name: ingress-sample
+  namespace: sample
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
 spec:
   ingressClassName: nginx
   rules:
-    - host: "api.go-sample.exchange"
-      http:
+    - http:
         paths:
-          - pathType: Prefix
-            path: "/"
-            backend:
-              service:
-                name: go-server-service
-                port:
-                  number: 8080
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: go-server-service
+              port:
+                number: 8080
+
+
+
 

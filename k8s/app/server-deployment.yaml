@@ -4,7 +4,7 @@ metadata:
   name: go-server
   namespace: sample
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: go-server
@@ -21,7 +21,7 @@ spec:
       imagePullSecrets:
       - name: regcred
       containers:
-        - image: hamedsalim1999/go-samole:${IMAGE_TAG}
+        - image: hamedsalim1999/go-samole:5690163479
           name: go-server
           imagePullPolicy: Always
           resources:
@@ -31,13 +31,12 @@ spec:
               memory: 1G
           ports:
             - containerPort: 8080
-            - containerPort: 8088
           readinessProbe:
             exec:
               command:
                 - sh
                 - -c
-                - if [ -z `curl http://localhost:8088/metrics  --silent | grep 'promhttp_metric_handler_requests_total'` ]; then  exit -1; else echo "OK" ; fi
+                - if [ $(curl -LI http://localhost:8080 -o /dev/null -w '%{http_code}\n' -s) == "200" ]; then exit -1; else echo "OK" ; fi
             initialDelaySeconds: 5
             periodSeconds: 5
           livenessProbe:
@@ -45,7 +44,7 @@ spec:
               command:
                 - sh
                 - -c
-                - if [ -z `curl http://localhost:8088/metrics  --silent | grep 'promhttp_metric_handler_requests_total'` ]; then  exit -1; else echo "OK" ; fi
+                - if [ $(curl -LI http://localhost:8080 -o /dev/null -w '%{http_code}\n' -s) == "200" ]; then exit -1; else echo "OK" ; fi
             timeoutSeconds: 5
             failureThreshold: 2
             periodSeconds: 20
