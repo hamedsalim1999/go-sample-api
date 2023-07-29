@@ -18,10 +18,8 @@ spec:
       labels:
         app: go-server
     spec:
-      imagePullSecrets:
-      - name: regcred
       containers:
-        - image: hamedsalim1999/go-samole:5690163479
+        - image: hamedsalim1999/go-samole:latest
           name: go-server
           imagePullPolicy: Always
           resources:
