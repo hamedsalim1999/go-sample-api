@@ -4,7 +4,7 @@ metadata:
   name: go-server
   namespace: sample
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: go-server
