@@ -147,3 +147,50 @@ To clean up and remove the Kubernetes resources provisioned on your EKS cluster 
    ```
 
    Terraform will prompt you to confirm the destruction. Enter `yes` when
+
+## GitHub Actions Workflow (Docker Image CI)
+
+The repository includes a GitHub Actions workflow that automates the building and pushing of Docker images to Docker Hub when changes are made to the `main` branch or when pull requests are submitted targeting the `main` branch.
+
+### Workflow Description:
+
+- The workflow is defined in the `.github/workflows/docker-image-ci.yml` file.
+- It uses the `ubuntu-latest` runner to execute the CI tasks on an Ubuntu environment.
+
+### Workflow Triggers:
+
+The workflow is triggered by the following events:
+
+- `push` events to the `main` branch.
+- `pull_request` events targeting the `main` branch.
+
+### Workflow Jobs:
+
+1. **Build and Push Docker Image:**
+
+   This job builds the Docker image for the application and pushes it to Docker Hub. The steps in this job are as follows:
+
+   - `Checkout code`: Checks out the code from the repository.
+   - `Run Unit Tests`: Runs unit tests for the application using the `make test` command from the `Makefile`.
+   - `Log in to Docker Hub`: Logs in to Docker Hub using the `docker/login-action` with the provided Docker Hub credentials stored in GitHub secrets. This step authenticates the workflow to push the Docker image to Docker Hub.
+   - `Build and push Docker image`: Uses the `docker/build-push-action` to build and push the Docker image to Docker Hub. The image is tagged with the format `DOCKER_USERNAME/go-samole:github.run_id`. The `DOCKER_USERNAME` is a secret that holds the Docker Hub username, and `github.run_id` is the unique identifier for the workflow run.
+
+2. **Build and Push Docker Image (latest tag):**
+
+   This job builds and pushes the Docker image with the `latest` tag to Docker Hub. The steps are similar to the previous job, but the image is tagged with the format `DOCKER_USERNAME/go-samole:latest`.
+
+### GitHub Secrets:
+
+The workflow uses the following GitHub secrets:
+
+- `DOCKER_USERNAME`: The Docker Hub username used to log in and push the Docker image.
+- `DOCKER_HUB_TOKEN`: The Docker Hub access token used to authenticate the workflow.
+
+### Automation Test and Docker Image Push:
+
+1. The workflow begins by running the unit tests for the application using the `make test` command from the `Makefile`.
+
+2. Once the unit tests are successful, the workflow proceeds to build and push the Docker image with a unique tag based on the `github.run_id`. This allows for versioning of the Docker image based on the workflow run.
+
+3. Additionally, the workflow also builds and pushes another Docker image tagged as `latest`. This is typically used as a versionless reference to the most recent image, making it convenient for deployment scenarios.
+
